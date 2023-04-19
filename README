@@ -1,0 +1,32 @@
+SURF ALERT
+
+Surf Alert is a simple app that notifies you when the surf conditions at your favorite spot are just right. It allows you to set up custom alerts based on the surf height, wave direction, and other parameters, so you'll never miss a good day of surfing again.
+
+Getting Started
+Prerequisites
+To use Surf Alert, you'll need:
+
+A computer or mobile device with internet access
+A web browser (Chrome, Firefox, Safari, etc.)
+An account on Magicseaweed.com (the website we use to retrieve surf data)
+Installing
+Clone this repository to your local machine
+Open the index.html file in your web browser
+Log in to your Magicseaweed.com account when prompted
+Set up your custom alerts using the form on the page
+That's it! Surf Alert will now check the surf conditions at your favorite spot every hour and send you a notification if they match your criteria.
+
+Contributing
+We welcome contributions from anyone who wants to help make Surf Alert better. If you'd like to contribute, please:
+
+Fork this repository
+Make your changes
+Submit a pull request
+We'll review your changes and merge them into the main codebase if they look good.
+
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+Acknowledgments
+Thanks to Magicseaweed.com for providing the surf data we use in this app.
+Thanks to the open source community for creating the libraries and tools we used to build Surf Alert.
