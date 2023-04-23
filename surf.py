@@ -1,4 +1,3 @@
-#this is the main surf alert file to be synced with the Raspberry  Pi
 import requests
 import datetime
 import pytz
@@ -70,7 +69,7 @@ def send_email(subject, message, files=[]):
         print('Error sending email:', str(e))
 
 
-# schedule the script to run every 24 hours at 15:00 CET
+# schedule the script to run every 24 hours
 def job():
     # get current date and time in CET timezone
     tz = pytz.timezone('Europe/Paris')
@@ -104,7 +103,7 @@ def job():
                     (data['wind']['direction'] > CS1direction_max or data['wind']['direction'] < CS1direction_min) and
                     data['wind']['speed'] <= CS1speed_max_direction2) and \
                         data['swell']['absMaxBreakingHeight'] >= CS1height_min and \
-                        data['swell']['period'] >= CS1period_min:
+                        data['swell']['components']['combined']['period'] >= CS1period_min:
                     longboard_surf = True
                     break
 
@@ -116,7 +115,7 @@ def job():
                     (data['wind']['direction'] > CS2direction_max or data['wind']['direction'] < CS2direction_min) and
                     data['wind']['speed'] <= CS2speed_max_direction2) and \
                         data['swell']['absMaxBreakingHeight'] >= CS2height_min and \
-                        data['swell']['period'] >= CS2period_min:
+                        data['swell']['components']['combined']['period'] >= CS2period_min:
                     shortboard_surf = True
                     break
 
@@ -128,18 +127,18 @@ def job():
                     (data['wind']['direction'] > CS3direction_max or data['wind']['direction'] < CS3direction_min) and
                     data['wind']['speed'] <= CS3speed_max_direction2) and \
                         data['swell']['absMaxBreakingHeight'] >= CS3height_min and \
-                        data['swell']['period'] >= CS3period_min:
+                        data['swell']['components']['combined']['period'] >= CS3period_min:
                     perfect_surf = True
                     break
 
             # send email if surf conditions meet criteria set 1
             if longboard_surf:
-                message = "Surf conditions for tomorrow are looking great. Get ready to catch some waves!\n\n"
+                message = "Surf conditions for tomorrow are looking good for longboarding. Get ready to catch some waves!\n\n"
                 message += "Here's a summary of the surf forecast for tomorrow:\n"
                 for data in tomorrow_data:
                     message += f"\nTime: {datetime.datetime.fromtimestamp(data['localTimestamp'], tz).strftime('%H:%M')}\n"
                     message += f"Wind: {data['wind']['direction']} degrees @ {data['wind']['speed']} kph\n"
-                    message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['period']} s ({data['swell']['direction']} degrees)\n"
+                    message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['components']['combined']['period']} s ({data['swell']['components']['combined']['direction']} degrees)\n"
                     message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
                 send_email('Good surf tomorrow!', message)
 
@@ -149,7 +148,7 @@ def job():
                 message += "Here's a summary of the surf forecast for tomorrow:\n"
                 for data in tomorrow_data:
                     message += f"\nTime: {datetime.datetime.fromtimestamp(data['localTimestamp'], tz).strftime('%H:%M')}\n"
-                    message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['period']} s ({data['swell']['direction']} degrees)\n"
+                    message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['components']['combined']['period']} s ({data['swell']['components']['combined']['direction']} degrees)\n"
                     message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
                 send_email('Suboptimal surf tomorrow', message)
 
@@ -159,7 +158,7 @@ def job():
                 message += "Here's a summary of the surf forecast for tomorrow:\n"
                 for data in tomorrow_data:
                     message += f"\nTime: {datetime.datetime.fromtimestamp(data['localTimestamp'], tz).strftime('%H:%M')}\n"
-                    message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['period']} s ({data['swell']['direction']} degrees)\n"
+                    message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['components']['combined']['period']} s ({data['swell']['components']['combined']['direction']} degrees)\n"
                     message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
                 send_email('Perfect surf tomorrow', message)
 
@@ -175,11 +174,11 @@ def job():
         print('Error getting surf forecast:', response.text)
 
 
-schedule.every().day.at("22:26").do(job)
+schedule.every().day.at("06:00`").do(job)
 print("Running surf forecast script...")
 
 while True:
     schedule.run_pending()
     # wait for 1 minute
-    time.sleep(30)
+    time.sleep(60)
 
