@@ -15,7 +15,7 @@ CS1direction_min = 50
 CS1direction_max = 230
 CS1speed_max_direction1 = 40  # max wind speed when wind direction is between direction_min and direction_max
 CS1speed_max_direction2 = 10  # max wind speed when wind direction is outside of direction_min and direction_max
-CS1height_min = 0.3
+CS1height_min = 0.35
 CS1period_min = 5
 
 # Criteria set 2 (shortboard conditions with higher swell and favorable wind)
@@ -133,52 +133,50 @@ def job():
 
             # send email if surf conditions meet criteria set 1
             if longboard_surf:
-                message = "Surf conditions for tomorrow are looking good for longboarding. Get ready to catch some waves!\n\n"
+                message = "Surf conditions for tomorrow are good enough for some longboarding!\n\n"
+                message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
                 message += "Here's a summary of the surf forecast for tomorrow:\n"
                 for data in tomorrow_data:
                     message += f"\nTime: {datetime.datetime.fromtimestamp(data['localTimestamp'], tz).strftime('%H:%M')}\n"
                     message += f"Wind: {data['wind']['direction']} degrees @ {data['wind']['speed']} kph\n"
                     message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['components']['combined']['period']} s ({data['swell']['components']['combined']['direction']} degrees)\n"
-                    message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
-                send_email('Good surf tomorrow!', message)
+                send_email('Nice surf tomorrow', message)
 
             # send email if surf conditions meet criteria set 2
             elif shortboard_surf:
-                message = "Surf conditions for tomorrow are suboptimal, but there will still be waves to catch.\n\n"
+                message = "Surf conditions for tomorrow are looking good. Get ready to catch some waves!\n\n"
+                message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
                 message += "Here's a summary of the surf forecast for tomorrow:\n"
                 for data in tomorrow_data:
                     message += f"\nTime: {datetime.datetime.fromtimestamp(data['localTimestamp'], tz).strftime('%H:%M')}\n"
                     message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['components']['combined']['period']} s ({data['swell']['components']['combined']['direction']} degrees)\n"
-                    message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
-                send_email('Suboptimal surf tomorrow', message)
+                send_email('Good surf tomorrow!', message)
 
             # send email if surf conditions meet criteria set 3
             elif perfect_surf:
                 message = "Surf conditions for tomorrow are perfect!\n\n"
+                message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
                 message += "Here's a summary of the surf forecast for tomorrow:\n"
                 for data in tomorrow_data:
                     message += f"\nTime: {datetime.datetime.fromtimestamp(data['localTimestamp'], tz).strftime('%H:%M')}\n"
                     message += f"Swell: {data['swell']['absMaxBreakingHeight']} m @ {data['swell']['components']['combined']['period']} s ({data['swell']['components']['combined']['direction']} degrees)\n"
-                    message += f"Check out the surf forecast for tomorrow at {linktomsw}\n\n"
-                send_email('Perfect surf tomorrow', message)
+                send_email('Perfect surf tomorrow!', message)
 
             else:
                 print('Surf conditions for tomorrow do not meet criteria')
 
-        # send email if there is no surf (conditions not met)
+        # message if there is no surf (conditions not met)
         else:
-            message = "There are is no surf tomorrow. Time to take a break and rest up for better waves.\n"
-            send_email('No surf tomorrow', message)
+            print('There are is no surf tomorrow. Time to take a break and rest up for better waves.')
 
     else:
         print('Error getting surf forecast:', response.text)
 
 
-schedule.every().day.at("06:00`").do(job)
+schedule.every().day.at("06:00").do(job)
 print("Running surf forecast script...")
 
 while True:
     schedule.run_pending()
     # wait for 1 minute
     time.sleep(60)
-
